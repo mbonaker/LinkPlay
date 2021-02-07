@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "LinkPlay",
+  "version": "0.0.0.3",
+  
+  "description": "Adds a context menu option to synchronize videos between friends.",
+  
+  "icons": {
+    "48": "icon.svg"
+  },
+  "web_accessible_resources": [
+    "icon.svg",
+    "web.css"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "linkplay@softwar3.com",
+      "strict_min_version": "85.0"
+    }
+  },
+  "permissions": ["storage"],
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["web.js"]
+    }
+  ]
+}

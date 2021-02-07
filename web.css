@@ -1,0 +1,13 @@
+.linkplay-attach {
+	position: absolute;
+	z-index: 10000;
+	width: 32px;
+	height: 32px;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.5s;
+	padding: 8px;
+}
+.linkplay-attach.video-hover {
+	opacity: 1;
+}
