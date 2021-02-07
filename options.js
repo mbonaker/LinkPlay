@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   browser.storage.sync.get("serverAddress").then(
     result => {
-      document.querySelector("#server-address").value = result.serverAddress || "localhost";
+      document.querySelector("#server-address").value = result.serverAddress || "linkplay.softwar3.com";
     },
     () => {
       console.log(`Error: ${error}`);
