@@ -3,7 +3,7 @@
   "name": "LinkPlay",
   "version": "0.0.0.4",
   
-  "description": "Adds a context menu option to synchronize videos between friends.",
+  "description": "Adds an option to synchronize video playback between friends. Does also support Netflix!",
   
   "icons": {
     "48": "icon.svg"
