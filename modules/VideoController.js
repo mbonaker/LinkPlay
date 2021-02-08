@@ -1,17 +1,51 @@
+/**
+ * The controller of a specific HTML5 video.
+ * 
+ * If there are multiple HTML5 videos on the page, one instance of VideoController should be attached to each of them.
+ */
 class VideoController {
   /**
    * @param {HTMLVideoElement} video
    */
   constructor(video) {
-    /** @type HTMLVideoElement */
+
+    /**
+     * The video that this controller handles and lays buttons over etc.
+     * There should be only one {@link VideoController} per video.
+     * @type HTMLVideoElement
+     */
     this.video = video;
-    /** @type WebSocketClient */
+
+    /**
+     * The {@link WebSocketClient} that transmits signals from/to this video.
+     * @type WebSocketClient
+     */
     this.webSocket = null;
+
+    /**
+     * A boolean, indicating whether the remote videos are currently believed to be paused.
+     * 
+     * This is helpful so we don't send a PAUSE signal to videos that are paused anyway.
+     * @type {boolean}
+     */
     this.remotePaused = true;
+
+    /**
+     * The believed progress of the remote videos.
+     * 
+     * This is helpful so we don't send a TIME signal to videos that are synchronized anyway.
+     * @type {number}
+     */
     this.remoteTime = 0;
   }
 
+  /**
+   * Creates an HTML element that should be added the the end of the body tag to show the LinkPlay button.
+   * The button will be there to control the video {@link VideoController.video}.
+   * @returns {HTMLDivElement}
+   */
   makeButton() {
+    // Make the HTML structure
     const button = this.video.ownerDocument.createElement('img');
     button.src = browser.runtime.getURL("icon.svg");
     const wrap = this.video.ownerDocument.createElement('div');
@@ -20,6 +54,8 @@ class VideoController {
     wrap.classList.add('linkplay-wrap');
     buttonContainer.append(wrap);
     buttonContainer.classList.add('linkplay', 'linkplay-container');
+
+    // Make it, so the CSS can hide the LinkPlay button, based on mouse movement.
     let timeout = null;
     for (const el of [buttonContainer, this.video]) {
       this.video.ownerDocument.addEventListener('mousemove', event => {
@@ -36,6 +72,8 @@ class VideoController {
         }
       });
     }
+
+    // Position the buttonContainer nicely
     setInterval(() => {
       const clientRect = this.video.getBoundingClientRect();
       buttonContainer.style.top = `${clientRect.top + this.video.ownerDocument.documentElement.scrollTop}px`;
@@ -43,6 +81,8 @@ class VideoController {
       buttonContainer.style.width = `${clientRect.width}px`;
       buttonContainer.style.height = `${clientRect.height}px`;
     }, 100);
+
+    // Make the connection happen when user clicks on LinkPlay button
     wrap.addEventListener('click', () => {
       browser.storage.sync.get("serverAddress").then(
         result => {
@@ -59,26 +99,25 @@ class VideoController {
     return buttonContainer;
   }
 
+  /**
+   * @see makeButton
+   */
   attachLinkPlay() {
-    console.log(this.video);
     this.video.ownerDocument.body.append(this.makeButton());
   }
 
   setTime(time) {
-    console.log("set time HTML5");
     this.remoteTime = time;
     this.video.pause();
     this.video.currentTime = time;
   }
 
   play() {
-    console.log("play HTML5");
     this.remotePaused = false;
     this.video.play();
   }
 
   pause() {
-    console.log("pause HTML5");
     this.remotePaused = true;
     this.video.pause();
   }
@@ -99,7 +138,6 @@ class VideoController {
   }
 
   _attachLinkPlay() {
-    console.log(`attach playback events`, this.video);
     this.video.addEventListener('pause', () => this.sendPause());
     this.video.addEventListener('play', () => this.sendPlay());
     this.video.addEventListener('seeked', () => this.sendTime());
@@ -112,10 +150,8 @@ class VideoController {
     const window = node.ownerDocument.defaultView.wrappedJSObject;
     let video;
     if (typeof window.netflix !== 'undefined' && typeof window.netflix.appContext !== 'undefined') {
-      console.log('make netflix video');
       video = new NetflixVideo(node);
     } else {
-      console.log('make HTML5 video');
       video = new VideoController(node);
     }
     video.attachLinkPlay();
@@ -123,6 +159,11 @@ class VideoController {
 }
 
 
+/**
+ * Netflix breaks if we try to set the {@link HTMLVideoElement.currentTime} directly on the video.
+ * Also the play and pause controls do not react to the raw video methods.
+ * But we are lucky that Netflix provides an API for anyone to use and control these features.
+ */
 class NetflixVideo extends VideoController {
   constructor(video) {
     super(video);
@@ -133,19 +174,16 @@ class NetflixVideo extends VideoController {
   }
 
   setTime(time) {
-    console.log(`netflix set time`);
     this.remoteTime = time;
     this.netflixPlayer.seek(time * 1000);
   }
 
   play() {
-    console.log(`netflix play`);
     this.remotePaused = false;
     this.netflixPlayer.play();
   }
 
   pause() {
-    console.log(`netflix pause`);
     this.remotePaused = true;
     this.netflixPlayer.pause();
   }
