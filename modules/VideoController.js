@@ -60,7 +60,7 @@ class VideoController {
     for (const el of [buttonContainer, this.video]) {
       this.video.ownerDocument.addEventListener('mousemove', event => {
         const clientRect = this.video.getBoundingClientRect();
-        if (clientRect.top < event.clientY && clientRect.left < event.clientY && clientRect.bottom > event.clientY && clientRect.right > event.clientX) {
+        if (clientRect.top < event.clientY && clientRect.left < event.clientX && clientRect.bottom > event.clientY && clientRect.right > event.clientX) {
           buttonContainer.classList.add('video-hover');
           if (timeout !== null)
             clearTimeout(timeout);
