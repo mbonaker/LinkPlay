@@ -12,31 +12,38 @@ class VideoController {
   }
 
   makeButton() {
-    const button = document.createElement('img');
+    const button = this.video.ownerDocument.createElement('img');
     button.src = browser.runtime.getURL("icon.svg");
-    const buttonContainer = document.createElement('div');
-    buttonContainer.append(button);
-    buttonContainer.classList.add('linkplay', 'linkplay-attach');
+    const wrap = this.video.ownerDocument.createElement('div');
+    const buttonContainer = this.video.ownerDocument.createElement('div');
+    wrap.append(button)
+    wrap.classList.add('linkplay-wrap');
+    buttonContainer.append(wrap);
+    buttonContainer.classList.add('linkplay', 'linkplay-container');
     let timeout = null;
     for (const el of [buttonContainer, this.video]) {
-      el.addEventListener('mousemove', () => {
-        buttonContainer.classList.add('video-hover');
-        if (timeout !== null)
-          clearTimeout(timeout);
-        timeout = setTimeout(() => buttonContainer.classList.remove('video-hover'), 5000);
-      });
-      el.addEventListener('mouseleave', () => {
-        buttonContainer.classList.remove('video-hover');
-        if (timeout !== null)
-          clearTimeout(timeout);
+      this.video.ownerDocument.addEventListener('mousemove', event => {
+        const clientRect = this.video.getBoundingClientRect();
+        if (clientRect.top < event.clientY && clientRect.left < event.clientY && clientRect.bottom > event.clientY && clientRect.right > event.clientX) {
+          buttonContainer.classList.add('video-hover');
+          if (timeout !== null)
+            clearTimeout(timeout);
+          timeout = setTimeout(() => buttonContainer.classList.remove('video-hover'), 2000);
+        } else {
+          if (timeout !== null)
+            clearTimeout(timeout);
+          buttonContainer.classList.remove('video-hover');
+        }
       });
     }
     setInterval(() => {
       const clientRect = this.video.getBoundingClientRect();
-      buttonContainer.style.top = `${clientRect.top + document.documentElement.scrollTop}px`;
-      buttonContainer.style.left = `${clientRect.left + document.documentElement.scrollLeft}px`;
+      buttonContainer.style.top = `${clientRect.top + this.video.ownerDocument.documentElement.scrollTop}px`;
+      buttonContainer.style.left = `${clientRect.left + this.video.ownerDocument.documentElement.scrollLeft}px`;
+      buttonContainer.style.width = `${clientRect.width}px`;
+      buttonContainer.style.height = `${clientRect.height}px`;
     }, 100);
-    buttonContainer.addEventListener('click', () => {
+    wrap.addEventListener('click', () => {
       browser.storage.sync.get("serverAddress").then(
         result => {
           if (!result.serverAddress) {
