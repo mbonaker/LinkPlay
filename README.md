@@ -1,5 +1,21 @@
 # LinkPlay
-Firefox addon to synchronize any video playback between friends. Also supports Netflix!
+Firefox addon to synchronize any video playback between friends.
+
+Supports basically every website, not limited to, but including:
+
+* YouTube
+* Netflix
+* Vimeo
+* Vivo
+* Streamtape
+* Mixdrop
+* VOE
+* PlayTube
+* UPStream
+
+Currently known websites without support:
+
+* Amazon Prime Video
 
 ## Installation
 
