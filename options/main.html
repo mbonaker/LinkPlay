@@ -7,13 +7,20 @@
 <body style="padding: 1em;">
     <form class="browser-style">
         <p>
-            <label for="server-address">Server address</label>
+            <label for="server-address">Server address:</label>
         </p>
         <p>
             <input type="text" id="server-address" />
         </p>
+        <p>
+            <label for="group-list">All groups (one per line):</label>
+        </p>
+        <p>
+            <textarea id="group-list"></textarea>
+        </p>
         <button class="browser-style" type="submit">Save</button>
     </form>
-    <script src="options.js"></script>
+    <script src="./main.js"></script>
+    <link href="main.css" rel="stylesheet" type="text/css" />
 </body>
 </html>

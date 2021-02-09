@@ -63,6 +63,8 @@ class GroupManager {
     const index = this.groups.indexOf(group);
     this.groups.splice(index, 1);
     this.onRemove.forEach(fn => fn(group));
+    if (group.isJoined)
+      group.disjoin();
   }
 
   /**
