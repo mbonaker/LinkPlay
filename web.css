@@ -24,10 +24,14 @@
 	opacity: 1;
 }
 
+.linkplay-container.video-hover li,
+.linkplay-container.video-hover img {
+	pointer-events: all;
+}
+
 .linkplay-container ul,
 .linkplay-container li,
 .linkplay-container img {
-	pointer-events: all;
 	display: inline;
 	vertical-align: middle;
 	font-family: sans-serif;

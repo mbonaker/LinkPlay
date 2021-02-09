@@ -25,6 +25,13 @@ class Group {
      * 
      * @type number
      */
+    this.assumedTime = 0;
+
+    /**
+     * Indicates the time that we strongly assume is collectively being shown
+     * 
+     * @type number
+     */
     this.collectiveTime = 0;
 
     // Provide some events
@@ -105,11 +112,12 @@ class Group {
     if (data.startsWith('JUMP ')) {
       const time = parseFloat(data.substr(5));
       this.collectiveTime = time;
+      this.assumedTime = time;
       this.onJump.forEach(fn => fn(time));
     }
     if (data.startsWith('SYNC ')) {
       const time = parseFloat(data.substr(5));
-      this.collectiveTime = time;
+      this.assumedTime = time;
       this.onSync.forEach(fn => fn(time));
     }
     if (data === 'PLAY') {
@@ -135,10 +143,11 @@ class Group {
   sendJump(time) {
     this.webSocket.send(`JUMP ${time}`);
     this.collectiveTime = time;
+    this.assumedTime = time;
   }
 
   sendSync(time) {
     this.webSocket.send(`SYNC ${time}`);
-    this.collectiveTime = time;
+    this.assumedTime = time;
   }
 }

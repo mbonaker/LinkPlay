@@ -60,7 +60,11 @@ class VideoController {
       }
       return group.join(`wss://${result.serverAddress}:52795`);
     }).then(() => {
-      group.onJump.push(time => this.jump(time));
+      group.onJump.push(time => {
+        this.ignoreSeek = true;
+        this.jump(time);
+        this.ignoreSeek = false;
+      });
       group.onPlay.push(() => this.play());
       group.onPause.push(() => this.pause());
       group.onSync.push(time => this.sync(time));
@@ -162,7 +166,7 @@ class NetflixVideo extends VideoController {
   }
 
   get time() {
-    return this.netflixPlayer.getCurrentTime();
+    return this.netflixPlayer.getCurrentTime() / 1000;
   }
 
   set time(time) {
