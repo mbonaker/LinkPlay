@@ -11,12 +11,15 @@ class GroupManager {
     // Provide some events
     this.onAdd = [];
     this.onRemove = [];
+
+    this.storeChanges = true;
   }
 
   /**
    * Load groups from local storage
    */
   init() {
+    this.storeChanges = false;
     /** @type Storage */
     const storage = browser.storage;
     storage.sync.get("groupNames").then(result => {
@@ -32,6 +35,15 @@ class GroupManager {
         this.names = changes['groupNames'].newValue;
       }
     });
+    this.storeChanges = true;
+  }
+
+  store() {
+    /** @type Storage */
+    const storage = browser.storage;
+    storage.sync.set({
+      'groupNames': this.names,
+    });
   }
 
   /**
@@ -39,6 +51,8 @@ class GroupManager {
    */
   add(group) {
     this.groups.push(group);
+    if (this.storeChanges)
+      this.store();
     this.onAdd.forEach(fn => fn(group));
   }
 
@@ -88,8 +102,15 @@ class GroupManager {
     }
 
     // Remove old groups
-    for (const group in this.groups.filter(group => !groupNames.includes(group.name))) {
+    for (const group of this.groups.filter(g => !groupNames.includes(g.name))) {
       this.remove(group);
     }
+  }
+
+  /**
+   * @return {string[]}
+   */
+  get names() {
+    return this.groups.map(group => group.name);
   }
 }

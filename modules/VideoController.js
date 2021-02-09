@@ -73,22 +73,22 @@ class VideoController {
 
   sendTime() {
     this.groupManager.groups.forEach(group => {
-      if (Math.abs(group.collectiveTime - this.video.currentTime) > 0.1)
-        group.sendTime(this.video.currentTime)
+      if (group.isJoined && Math.abs(group.collectiveTime - this.video.currentTime) > 0.1)
+        group.sendTime(this.video.currentTime);
     });
   }
 
   sendPlay() {
     this.groupManager.groups.forEach(group => {
-      if (group.collectivelyPaused)
-        group.sendPlay()
+      if (group.isJoined && group.collectivelyPaused)
+        group.sendPlay();
     });
   }
 
   sendPause() {
     this.groupManager.groups.forEach(group => {
-      if (!group.collectivelyPaused)
-        group.sendPause()
+      if (group.isJoined && !group.collectivelyPaused)
+        group.sendPause();
     });
   }
 

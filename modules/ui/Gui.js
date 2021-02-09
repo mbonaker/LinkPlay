@@ -8,6 +8,7 @@ class Gui {
   constructor(controller) {
     this.controller = controller;
     this.linkPlayButton = new LinkPlayButton(controller);
+    /** @type {GroupButton[]} */
     this.groupButtons = [];
     /** @type ?HTMLDivElement */
     this.elContainer = null;
@@ -52,7 +53,7 @@ class Gui {
       for (const groupButton of this.groupButtons) {
         if (groupButton.group === group) {
           this.groupButtons = this.groupButtons.filter(gb => gb.group !== group);
-          groupButton.remove();
+          groupButton.elButton.remove();
         }
       }
     });

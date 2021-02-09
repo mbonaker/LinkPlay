@@ -41,6 +41,8 @@ class Group {
      */
     this.whenJoined = null;
 
+    this.isJoined = false;
+
     /**
      * A promise that is fulfilled as soon as no connection is underway or successful.
      * 
@@ -67,13 +69,16 @@ class Group {
         console.error(e);
         rej(e);
         this.signalDisjoined();
+        this.isJoined = false;
       }
       this.webSocket.addEventListener('open', () => {
         this.webSocket.send(this.name);
+        this.isJoined = true;
         res();
         this.onJoin.forEach(fn => fn());
       });
       this.webSocket.addEventListener('message', event => this.handleMessage(event.data));
+      this.webSocket.addEventListener('close', () => this.disjoin());
     });
     this.whenDisjoined = new Promise(res => {
       this.signalDisjoined = res;
@@ -89,6 +94,7 @@ class Group {
     this.whenJoined = null;
     this.signalDisjoined();
     this.onDisjoin.forEach(fn => fn());
+    this.isJoined = false;
   }
   
   /**
