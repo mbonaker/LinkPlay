@@ -1,23 +1,62 @@
 .linkplay-container {
 	position: absolute;
-	z-index: 100000;
 	pointer-events: none;
+	/*noinspection CssOverwrittenProperties*/
+	z-index: 100000;
+	/*noinspection CssOverwrittenProperties*/
+	z-index: 10000000000000000000;
+	margin: 0;
 }
-.linkplay-wrap {
-	pointer-events: all;
+
+.linkplay-container, .linkplay-container * {
+	box-sizing: content-box;
+}
+
+.linkplay-controls {
 	position: absolute;
-	width: 60px;
-	height: 60px;
-	cursor: pointer;
+	top: 30%;
+	left: 50px;
 	opacity: 0;
 	transition: opacity 0.5s;
-	padding: 8px;
-	box-sizing: content-box;
-	left: 50%;
-	top: 68%;
-	margin: 0;
-	transform: translateX(-50%);
 }
-.linkplay-container.video-hover .linkplay-wrap {
-	opacity: 0.5;
+
+.linkplay-container.video-hover .linkplay-controls {
+	opacity: 1;
 }
+
+.linkplay-container ul,
+.linkplay-container li,
+.linkplay-container img {
+	pointer-events: all;
+	display: inline;
+	vertical-align: middle;
+	font-family: sans-serif;
+	cursor: pointer;
+	font-size: 105%;
+	margin-right: 0.5em;
+}
+
+.linkplay-container ul {
+	list-style: none;
+	padding: 0;
+}
+
+.linkplay-container li {
+	padding: 0.4em 1em;
+	background: rgba(0, 0, 0, 0.3);
+	color: white;
+	border-radius: 2em;
+}
+
+.linkplay-container .joined {
+	background: #00B725;
+}
+
+.linkplay-container img {
+	width: 35px;
+	height: auto;
+	background: white;
+	border-radius: 100%;
+	padding: 0.5em;
+}
+

@@ -31,9 +31,13 @@
         "web.css"
       ],
       "js": [
+        "modules/ui/GroupButton.js",
+        "modules/ui/Gui.js",
+        "modules/ui/LinkPlayButton.js",
+        "modules/Group.js",
+        "modules/GroupManager.js",
         "modules/Injector.js",
         "modules/VideoController.js",
-        "modules/WebSocketClient.js",
         "web.js"
       ]
     }
