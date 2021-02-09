@@ -17,13 +17,25 @@ class VideoController {
     this.video = video;
     this.video.addEventListener('pause', () => this.sendPause());
     this.video.addEventListener('play', () => this.sendPlay());
-    this.video.addEventListener('seeked', () => this.sendTime());
+    this.video.addEventListener('seeked', () => {
+      if (!this.ignoreSeek)
+        this.sendJump();
+    });
+    this.video.addEventListener('timeupdate', () => {
+      const now = new Date().getTime();
+      if (this.lastSync < now - 200) {
+        this.lastSync = now;
+        this.sendSync();
+      }
+    });
 
     this.gui = new Gui(this);
     this.groupManager = new GroupManager();
     this.groupManager.onRemove.push(group => group.whenJoined === null ? ()=>{} : group.whenJoined.then(() => group.disjoin()));
     this.onJoinGroup = [];
     this.onDisjoinGroup = [];
+    this.lastSync = 0;
+    this.ignoreSeek = false;
   }
 
   /**
@@ -48,9 +60,10 @@ class VideoController {
       }
       return group.join(`wss://${result.serverAddress}:52795`);
     }).then(() => {
-      group.onSetTime.push(time => this.setTime(time));
+      group.onJump.push(time => this.jump(time));
       group.onPlay.push(() => this.play());
       group.onPause.push(() => this.pause());
+      group.onSync.push(time => this.sync(time));
       this.onJoinGroup.forEach(fn => fn(group));
       return group.whenDisjoined;
     }).then(() => {
@@ -58,9 +71,16 @@ class VideoController {
     });
   }
 
-  setTime(time) {
-    this.video.pause();
+  get time() {
+    return this.video.currentTime;
+  }
+
+  set time(time) {
     this.video.currentTime = time;
+  }
+
+  jump(time) {
+    this.time = time;
   }
 
   play() {
@@ -71,24 +91,43 @@ class VideoController {
     this.video.pause();
   }
 
-  sendTime() {
+  sync(time) {
+    if (this.time > time + 0.5){
+      this.ignoreSeek = true;
+      this.time = time;
+      this.ignoreSeek = false;
+    }
+  }
+
+  sendJump() {
     this.groupManager.groups.forEach(group => {
       if (group.isJoined && Math.abs(group.collectiveTime - this.video.currentTime) > 0.1)
-        group.sendTime(this.video.currentTime);
+        group.sendJump(this.time);
     });
   }
 
   sendPlay() {
     this.groupManager.groups.forEach(group => {
-      if (group.isJoined && group.collectivelyPaused)
+      if (group.isJoined && group.collectivelyPaused) {
+        this.sendJump(this.time);
         group.sendPlay();
+      }
     });
   }
 
   sendPause() {
     this.groupManager.groups.forEach(group => {
-      if (group.isJoined && !group.collectivelyPaused)
+      if (group.isJoined && !group.collectivelyPaused) {
+        this.sendJump(this.time);
         group.sendPause();
+      }
+    });
+  }
+
+  sendSync() {
+    this.groupManager.groups.forEach(group => {
+      if (group.isJoined)
+        group.sendSync(this.time);
     });
   }
 
@@ -122,7 +161,11 @@ class NetflixVideo extends VideoController {
     this.netflixPlayer = vp.getVideoPlayerBySessionId(id);
   }
 
-  setTime(time) {
+  get time() {
+    return this.netflixPlayer.getCurrentTime();
+  }
+
+  set time(time) {
     this.netflixPlayer.seek(time * 1000);
   }
 
@@ -132,12 +175,5 @@ class NetflixVideo extends VideoController {
 
   pause() {
     this.netflixPlayer.pause();
-  }
-
-  sendTime() {
-    this.groupManager.groups.forEach(group => {
-      if (Math.abs(group.collectiveTime - this.video.currentTime) > 0.1)
-        group.sendTime(this.netflixPlayer.getCurrentTime() / 1000)
-    });
   }
 }

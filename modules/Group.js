@@ -32,7 +32,8 @@ class Group {
     this.onDisjoin = [];
     this.onPlay = [];
     this.onPause = [];
-    this.onSetTime = [];
+    this.onJump = [];
+    this.onSync = [];
 
     /**
      * `null` as long as no joining effort has been made. As soon as a connection is underway or was successful, this will be a promise that is resolved when the connection is stable. After disjoining the group, this will be `null` again and the cycle continues.
@@ -101,10 +102,15 @@ class Group {
    * @param {string} data Handle any message that was sent by the server
    */
   handleMessage(data) {
-    if (data.startsWith('TIME ')) {
+    if (data.startsWith('JUMP ')) {
       const time = parseFloat(data.substr(5));
       this.collectiveTime = time;
-      this.onSetTime.forEach(fn => fn(time));
+      this.onJump.forEach(fn => fn(time));
+    }
+    if (data.startsWith('SYNC ')) {
+      const time = parseFloat(data.substr(5));
+      this.collectiveTime = time;
+      this.onSync.forEach(fn => fn(time));
     }
     if (data === 'PLAY') {
       this.collectivelyPaused = false;
@@ -126,8 +132,13 @@ class Group {
     this.collectivelyPaused = false;
   }
 
-  sendTime(time) {
-    this.webSocket.send(`TIME ${time}`);
+  sendJump(time) {
+    this.webSocket.send(`JUMP ${time}`);
+    this.collectiveTime = time;
+  }
+
+  sendSync(time) {
+    this.webSocket.send(`SYNC ${time}`);
     this.collectiveTime = time;
   }
 }
