@@ -3,6 +3,7 @@
   "name": "LinkPlay",
 
   "description": "Adds an option to synchronize video playback between friends. Does also support Netflix!",
+  "version": "dev",
 
   "icons": {
     "48": "icon.svg"
