@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "LinkPlay",
-  "version": "0.0.0.6",
+  "version": "0.0.1.0",
 
   "description": "Adds an option to synchronize video playback between friends. Does also support Netflix!",
 
@@ -20,7 +20,7 @@
   },
   "permissions": ["storage"],
   "options_ui": {
-    "page": "options.html",
+    "page": "options/main.html",
     "browser_style": true
   },
   "content_scripts": [

@@ -1,10 +1,14 @@
+/**
+ * Represents the GUI of a single video, including the main button and all the group buttons as constituents.
+ */
 class Gui {
   /**
-   * @param {VideoController} controller
+   * @param {VideoController} controller The controller of the {@link HTMLVideoElement} this GUI should interface for. 
    */
   constructor(controller) {
     this.controller = controller;
     this.linkPlayButton = new LinkPlayButton(controller);
+    /** @type {GroupButton[]} */
     this.groupButtons = [];
     /** @type ?HTMLDivElement */
     this.elContainer = null;
@@ -14,34 +18,60 @@ class Gui {
     this.elButtonList = null;
   }
 
+  /**
+   * @callback appendCallback
+   * @param {...HTMLElement} elements Elements to be appended
+   * @return {void}
+   */
+
+  /**
+   * @param {appendCallback} append Function to be called to append new elements to the dom
+   */
   makeLinkPlayButton(append) {
-    append(this.linkPlayButton.make(this.controller.video));
+    append(this.linkPlayButton.make());
   }
 
+  /**
+   * This method makes the group buttons and appends them using the {@link append} parameter. This will also append more buttons in the future if more groups are created (that's why {@link append} has to be a callback.
+   * 
+   * @param {appendCallback} append Function to be called to append new elements to the dom
+   */
   makeGroupButtons(append) {
     const document = this.controller.video.ownerDocument;
 
     this.elButtonList = document.createElement('ul');
 
+    // Append a new button if a group is added
     this.controller.groupManager.onAdd.push(/** @type Group */ group => {
       const button = new GroupButton(this.controller, group);
       this.groupButtons.push(button);
       button.make(el => this.elButtonList.append(el));
     });
+
+    // Remove the old button if a group is removed
     this.controller.groupManager.onRemove.push(group => {
       for (const groupButton of this.groupButtons) {
         if (groupButton.group === group) {
           this.groupButtons = this.groupButtons.filter(gb => gb.group !== group);
-          groupButton.remove();
+          groupButton.elButton.remove();
         }
       }
     });
+
+    // Using the append parameter only outside the add/remove events actually defeats the whole purpose of it.
+    // I still think that it is not really a bad idea because it keeps said fact back-boxed.
     append(this.elButtonList);
   }
 
+  /**
+   * Makes HTML elements, necessary to render the overlay.
+   * 
+   * @returns {HTMLElement[]} Elements to be added to the dom for the gui to work
+   */
   make() {
     const document = this.controller.video.ownerDocument;
 
+    // Make the HTML structure
     this.elContainer = document.createElement('div');
     this.elContainer.classList.add('linkplay', 'linkplay-container');
 
@@ -49,7 +79,6 @@ class Gui {
     this.elControlContainer.classList.add('linkplay-controls');
     this.elContainer.append(this.elControlContainer);
 
-    // Make the HTML structure
     this.makeLinkPlayButton(el => this.elControlContainer.append(el));
     this.makeGroupButtons(el => this.elControlContainer.append(el));
 
@@ -69,7 +98,7 @@ class Gui {
       }
     });
 
-    // Position the buttonContainer nicely
+    // Position the elContainer nicely
     setInterval(() => {
       const clientRect = this.controller.video.getBoundingClientRect();
       this.elContainer.style.top = `${clientRect.top + document.documentElement.scrollTop}px`;

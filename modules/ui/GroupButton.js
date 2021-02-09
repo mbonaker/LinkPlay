@@ -1,6 +1,9 @@
+/**
+ * Represents a single button on a video overlay that can be used to join a specific group.
+ */
 class GroupButton {
   /**
-   * @param {VideoController} controller
+   * @param {VideoController} controller The controller for the video this button interfaces for.
    * @param {Group} group
    */
   constructor(controller, group) {
@@ -10,22 +13,35 @@ class GroupButton {
     this.elButton = null;
   }
 
+  /**
+   * @callback appendCallback
+   * @param {...HTMLElement} elements Elements to be appended
+   * @return {void}
+   */
+
+  /**
+   * Appends a freshly made button to the dom, representing the group.
+   * 
+   * @param {appendCallback} append Function to be called to append new elements to the dom
+   */
   make(append) {
     const document = this.controller.video.ownerDocument;
-    this.elButton = document.createElement('li');
 
+    // Make HTML structure
+    this.elButton = document.createElement('li');
     this.elButton.append(document.createTextNode(this.group.name));
+
+    // Add events
     this.elButton.addEventListener('click', () => {
-      console.log(this.group.whenJoined);
       if (this.group.whenJoined === null)
         this.controller.joinGroup(this.group);
       else
         this.group.disjoin();
     });
-
     this.group.onJoin.push(() => this.elButton.classList.add('joined'));
     this.group.onDisjoin.push(() => this.elButton.classList.remove('joined'));
 
+    // Append to DOM
     append(this.elButton);
   }
 
