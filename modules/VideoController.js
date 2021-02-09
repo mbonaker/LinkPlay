@@ -36,6 +36,7 @@ class VideoController {
     this.onDisjoinGroup = [];
     this.lastSync = 0;
     this.ignoreSeek = false;
+    this.maxOutOfSync = 0.5;
   }
 
   /**
@@ -96,7 +97,7 @@ class VideoController {
   }
 
   sync(time) {
-    if (this.time > time + 0.5){
+    if (this.time > time + this.maxOutOfSync){
       this.ignoreSeek = true;
       this.time = time;
       this.ignoreSeek = false;
@@ -163,6 +164,7 @@ class NetflixVideo extends VideoController {
     const vp = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
     const id = vp.getAllPlayerSessionIds()[0];
     this.netflixPlayer = vp.getVideoPlayerBySessionId(id);
+    this.maxOutOfSync = 1.0; // Grant Netflix more out of sync room, so rewinds are less often
   }
 
   get time() {
@@ -179,5 +181,27 @@ class NetflixVideo extends VideoController {
 
   pause() {
     this.netflixPlayer.pause();
+  }
+
+  /**
+   * Reimplemented for Netflix to remove jumps because Netflix jumps very often cause rewinds by several seconds
+   */
+  sendPlay() {
+    this.groupManager.groups.forEach(group => {
+      if (group.isJoined && group.collectivelyPaused) {
+        group.sendPlay();
+      }
+    });
+  }
+
+  /**
+   * Reimplemented for Netflix to remove jumps because Netflix jumps very often cause rewinds by several seconds
+   */
+  sendPause() {
+    this.groupManager.groups.forEach(group => {
+      if (group.isJoined && !group.collectivelyPaused) {
+        group.sendPause();
+      }
+    });
   }
 }
