@@ -1,7 +1,8 @@
 /**
  * Communicator for the LinkPlay server communication.
- * 
  * One instance of a Group should be created per HTML5 video.
+ * 
+ * Groups don't have references to the videos or video controllers. Callbacks/Events are used for that kind of stuff.
  */
 class Group {
   /**
@@ -11,21 +12,48 @@ class Group {
     this.name = name;
     /** @type {WebSocket} */
     this.webSocket = null;
+
+    /**
+     * Indicates whether we assume that the collective state is on pause
+     * 
+     * @type boolean
+     */
     this.collectivelyPaused = false;
+
+    /**
+     * Indicates the time that we assume is collectively being shown
+     * 
+     * @type number
+     */
     this.collectiveTime = 0;
+
+    // Provide some events
     this.onJoin = [];
     this.onDisjoin = [];
     this.onPlay = [];
     this.onPause = [];
     this.onSetTime = [];
+
+    /**
+     * `null` as long as no joining effort has been made. As soon as a connection is underway or was successful, this will be a promise that is resolved when the connection is stable. After disjoining the group, this will be `null` again and the cycle continues.
+     * 
+     * @type ?Promise<void>
+     */
     this.whenJoined = null;
+
+    /**
+     * A promise that is fulfilled as soon as no connection is underway or successful.
+     * 
+     * @type ?Promise<void>
+     */
     this.whenDisjoined = new Promise(res => res());
     this.signalDisjoined = null;
   }
 
   /**
+   * Make this group join the web service.
    * 
-   * @param {string} url
+   * @param {string} url Server url of the web service
    * @returns {Promise<void>}
    */
   join(url) {
@@ -38,6 +66,7 @@ class Group {
       } catch (e) {
         console.error(e);
         rej(e);
+        this.signalDisjoined();
       }
       this.webSocket.addEventListener('open', () => {
         this.webSocket.send(this.name);
@@ -52,6 +81,9 @@ class Group {
     return this.whenJoined;
   }
 
+  /**
+   * 
+   */
   disjoin() {
     this.webSocket.close();
     this.whenJoined = null;

@@ -1,7 +1,10 @@
+/**
+ * Represents the main button on the video overlay.
+ */
 class LinkPlayButton {
 
   /**
-   * @param {VideoController} controller
+   * @param {VideoController} controller The controller of the video this button should overlay
    */
   constructor(controller) {
     this.controller = controller;
@@ -10,12 +13,10 @@ class LinkPlayButton {
   }
 
   /**
-   * 
-   * @param {HTMLVideoElement} video
-   * @returns {HTMLImageElement}
+   * @returns {HTMLImageElement} A freshly made button that can be inserted into the DOM
    */
-  make(video) {
-    const document = video.ownerDocument;
+  make() {
+    const document = this.controller.video.ownerDocument;
     this.elButton = document.createElement('img');
     this.elButton.src = browser.runtime.getURL("icon.svg");
 

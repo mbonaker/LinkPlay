@@ -30,6 +30,7 @@ class VideoController {
    * @see makeButton
    */
   attachLinkPlay() {
+    this.groupManager.init();
     this.video.ownerDocument.body.append(... this.gui.make());
   }
 
