@@ -162,7 +162,7 @@ class NetflixVideo extends VideoController {
   }
 
   get time() {
-    return this.netflixPlayer.getCurrentTime();
+    return this.netflixPlayer.getCurrentTime() / 1000;
   }
 
   set time(time) {
