@@ -25,6 +25,4 @@ Currently known websites without support:
 
 ### Configuration
 
-Since this addon currently gets blocked by some adblockers (at least uBlock), you may want to add the rule `@@||linkplay.softwar3.com:52795^$websocket` to prevent that from happening.
-
-By default the addon connects to the `linkplay.softwar3.com` server but you can change that in the extension settings. Remember to whitelist whatever server you use in your adblocker.
+By default the addon connects to the `linkplay.softwar3.com` server but you can change that in the extension settings.
