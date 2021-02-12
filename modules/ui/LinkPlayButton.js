@@ -27,6 +27,7 @@ class LinkPlayButton {
       const group = this.controller.groupManager.get(groupName);
       this.controller.groupManager.add(group);
       this.controller.joinGroup(group);
+      this.controller.video.focus();
     });
 
     return this.elButton;
