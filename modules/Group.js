@@ -1,7 +1,7 @@
 /**
  * Communicator for the LinkPlay server communication.
  * One instance of a Group should be created per HTML5 video.
- * 
+ *
  * Groups don't have references to the videos or video controllers. Callbacks/Events are used for that kind of stuff.
  */
 class Group {
@@ -15,21 +15,21 @@ class Group {
 
     /**
      * Indicates whether we assume that the collective state is on pause
-     * 
+     *
      * @type boolean
      */
     this.collectivelyPaused = false;
 
     /**
      * Indicates the time that we assume is collectively being shown
-     * 
+     *
      * @type number
      */
     this.assumedTime = 0;
 
     /**
      * Indicates the time that we strongly assume is collectively being shown
-     * 
+     *
      * @type number
      */
     this.collectiveTime = 0;
@@ -44,7 +44,7 @@ class Group {
 
     /**
      * `null` as long as no joining effort has been made. As soon as a connection is underway or was successful, this will be a promise that is resolved when the connection is stable. After disjoining the group, this will be `null` again and the cycle continues.
-     * 
+     *
      * @type ?Promise<void>
      */
     this.whenJoined = null;
@@ -53,7 +53,7 @@ class Group {
 
     /**
      * A promise that is fulfilled as soon as no connection is underway or successful.
-     * 
+     *
      * @type ?Promise<void>
      */
     this.whenDisjoined = new Promise(res => res());
@@ -143,7 +143,7 @@ class Group {
   }
 
   /**
-   * 
+   *
    */
   disjoin() {
     this.internalProxy.disconnect();
@@ -152,7 +152,7 @@ class Group {
     this.onDisjoin.forEach(fn => fn());
     this.isJoined = false;
   }
-  
+
   /**
    * @param {string} message Handle any message that was sent by the server
    */

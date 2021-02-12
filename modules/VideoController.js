@@ -1,6 +1,6 @@
 /**
  * The controller of a specific HTML5 video.
- * 
+ *
  * If there are multiple HTML5 videos on the page, one instance of VideoController should be attached to each of them.
  */
 class VideoController {

@@ -1,6 +1,6 @@
 /**
  * The initiator for the document's manipulation.
- * 
+ *
  * Ony one instance should be created per document (but that means separate instances per frame).
  */
 class Injector {
@@ -14,7 +14,7 @@ class Injector {
   /**
    * Start observing the DOM for videos that are dynamically added.
    * For every video, a {@link VideoController} is created to attach the corresponding LinkPlay button.
-   * 
+   *
    * @returns {Injector} The {@link Injector} itself for call chaining.
    */
   observe() {

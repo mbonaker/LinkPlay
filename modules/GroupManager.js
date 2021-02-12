@@ -1,6 +1,6 @@
 /**
  * Manages the groups of a particular video.
- * 
+ *
  * Keeping track of the local storage to remember previous groups is part of the {@link GroupManager}s task.
  */
 class GroupManager {
@@ -77,7 +77,7 @@ class GroupManager {
 
   /**
    * Returns the group with the name given by `groupName`. If the group didn't exist yet, a new one is created but not added!
-   * 
+   *
    * @param {string} groupName The name of the group to be returned
    * @returns {Group} The new or pre-existing group
    */
@@ -91,7 +91,7 @@ class GroupManager {
 
   /**
    * Set this manager to contain exactly the groups that are given
-   * 
+   *
    * @param {string[]} groupNames
    */
   set names(groupNames) {
