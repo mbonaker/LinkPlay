@@ -21,7 +21,7 @@ class GroupButton {
 
   /**
    * Appends a freshly made button to the dom, representing the group.
-   * 
+   *
    * @param {appendCallback} append Function to be called to append new elements to the dom
    */
   make(append) {

@@ -3,7 +3,7 @@
  */
 class Gui {
   /**
-   * @param {VideoController} controller The controller of the {@link HTMLVideoElement} this GUI should interface for. 
+   * @param {VideoController} controller The controller of the {@link HTMLVideoElement} this GUI should interface for.
    */
   constructor(controller) {
     this.controller = controller;
@@ -33,7 +33,7 @@ class Gui {
 
   /**
    * This method makes the group buttons and appends them using the {@link append} parameter. This will also append more buttons in the future if more groups are created (that's why {@link append} has to be a callback.
-   * 
+   *
    * @param {appendCallback} append Function to be called to append new elements to the dom
    */
   makeGroupButtons(append) {
@@ -65,7 +65,7 @@ class Gui {
 
   /**
    * Makes HTML elements, necessary to render the overlay.
-   * 
+   *
    * @returns {HTMLElement[]} Elements to be added to the dom for the gui to work
    */
   make() {

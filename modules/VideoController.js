@@ -1,6 +1,6 @@
 /**
  * The controller of a specific HTML5 video.
- * 
+ *
  * If there are multiple HTML5 videos on the page, one instance of VideoController should be attached to each of them.
  */
 class VideoController {
@@ -36,6 +36,7 @@ class VideoController {
     this.onDisjoinGroup = [];
     this.lastSync = 0;
     this.ignoreSeek = false;
+    this.maxOutOfSync = 0.5;
   }
 
   /**
@@ -54,12 +55,7 @@ class VideoController {
     if (!this.groupManager.has(group)) {
       this.groupManager.add(group);
     }
-    return browser.storage.sync.get("serverAddress").then(result => {
-      if (!result.serverAddress) {
-        result.serverAddress = 'linkplay.softwar3.com';
-      }
-      return group.join(`wss://${result.serverAddress}:52795`);
-    }).then(() => {
+    return group.join().then(() => {
       group.onJump.push(time => {
         this.ignoreSeek = true;
         this.jump(time);
@@ -96,7 +92,7 @@ class VideoController {
   }
 
   sync(time) {
-    if (this.time > time + 0.5){
+    if (this.time > time + this.maxOutOfSync){
       this.ignoreSeek = true;
       this.time = time;
       this.ignoreSeek = false;
@@ -163,6 +159,7 @@ class NetflixVideo extends VideoController {
     const vp = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
     const id = vp.getAllPlayerSessionIds()[0];
     this.netflixPlayer = vp.getVideoPlayerBySessionId(id);
+    this.maxOutOfSync = 1.0; // Grant Netflix more out of sync room, so rewinds are less often
   }
 
   get time() {
@@ -179,5 +176,27 @@ class NetflixVideo extends VideoController {
 
   pause() {
     this.netflixPlayer.pause();
+  }
+
+  /**
+   * Reimplemented for Netflix to remove jumps because Netflix jumps very often cause rewinds by several seconds
+   */
+  sendPlay() {
+    this.groupManager.groups.forEach(group => {
+      if (group.isJoined && group.collectivelyPaused) {
+        group.sendPlay();
+      }
+    });
+  }
+
+  /**
+   * Reimplemented for Netflix to remove jumps because Netflix jumps very often cause rewinds by several seconds
+   */
+  sendPause() {
+    this.groupManager.groups.forEach(group => {
+      if (group.isJoined && !group.collectivelyPaused) {
+        group.sendPause();
+      }
+    });
   }
 }
