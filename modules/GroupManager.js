@@ -13,37 +13,39 @@ class GroupManager {
     this.onRemove = [];
 
     this.storeChanges = true;
+    this.storageChangeListener = null;
   }
 
   /**
    * Load groups from local storage
    */
   init() {
-    this.storeChanges = false;
-    /** @type Storage */
-    const storage = browser.storage;
-    storage.sync.get("groupNames").then(result => {
+    browser.storage.sync.get("groupNames").then(result => {
       if (!result['groupNames']) {
         result['groupNames'] = [];
       }
+      this.storeChanges = false;
       this.names = result['groupNames'];
+      this.storeChanges = true;
     });
-    storage.onChanged.addListener((/* StorageChange */ changes, /* string */areaName) => {
+    this.storageChangeListener = (/* StorageChange */ changes, /* string */areaName) => {
       if (areaName !== 'sync')
         return;
       if (changes['groupNames']) {
+        this.storeChanges = false;
         this.names = changes['groupNames'].newValue;
+        this.storeChanges = true;
       }
-    });
-    this.storeChanges = true;
+    };
+    browser.storage.onChanged.addListener(this.storageChangeListener);
   }
 
   store() {
-    /** @type Storage */
-    const storage = browser.storage;
-    storage.sync.set({
+    browser.storage.onChanged.removeListener(this.storageChangeListener);
+    browser.storage.sync.set({
       'groupNames': this.names,
     });
+    browser.storage.onChanged.addListener(this.storageChangeListener);
   }
 
   /**
@@ -65,6 +67,8 @@ class GroupManager {
     this.onRemove.forEach(fn => fn(group));
     if (group.isJoined)
       group.disjoin();
+    if (this.storeChanges)
+      this.store();
   }
 
   /**
