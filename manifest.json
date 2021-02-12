@@ -5,6 +5,11 @@
   "description": "Adds an option to synchronize video playback between friends. Does also support Netflix!",
   "version": "dev",
 
+  "background":{
+    "scripts": [
+      "background-proxy.js"
+    ]
+  },
   "icons": {
     "48": "icon.svg"
   },

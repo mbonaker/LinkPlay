@@ -55,12 +55,7 @@ class VideoController {
     if (!this.groupManager.has(group)) {
       this.groupManager.add(group);
     }
-    return browser.storage.sync.get("serverAddress").then(result => {
-      if (!result.serverAddress) {
-        result.serverAddress = 'linkplay.softwar3.com';
-      }
-      return group.join(`wss://${result.serverAddress}:52795`);
-    }).then(() => {
+    return group.join().then(() => {
       group.onJump.push(time => {
         this.ignoreSeek = true;
         this.jump(time);
