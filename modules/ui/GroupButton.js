@@ -37,6 +37,7 @@ class GroupButton {
         this.controller.joinGroup(this.group);
       else
         this.group.disjoin();
+      this.controller.video.focus();
     });
     this.group.onJoin.push(() => this.elButton.classList.add('joined'));
     this.group.onDisjoin.push(() => this.elButton.classList.remove('joined'));

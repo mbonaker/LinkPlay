@@ -22,9 +22,12 @@ class LinkPlayButton {
 
     this.elButton.addEventListener('click', () => {
       const groupName = prompt('Group Key:', "" + Math.round(Math.random() * 10000));
+      if (!groupName)
+        return;
       const group = this.controller.groupManager.get(groupName);
       this.controller.groupManager.add(group);
       this.controller.joinGroup(group);
+      this.controller.video.focus();
     });
 
     return this.elButton;

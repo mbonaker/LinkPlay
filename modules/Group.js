@@ -78,16 +78,12 @@ class Group {
    */
   _establishBackgroundProxyConnection(connection) {
     return new Promise((res, rej) => {
-      console.log('_establishBackgroundProxyConnection');
       const handleConnectedMessage = message => {
-        console.log('handleConnectedMessage', message);
         if (message !== 'CONNECTED') {
           rej('Background proxy did not connect.');
           return;
         }
-        console.log('connected.', message);
         connection.onMessage.removeListener(handleConnectedMessage);
-        console.log('res.', message);
         res(connection);
       };
       connection.onMessage.addListener(handleConnectedMessage);
@@ -99,7 +95,6 @@ class Group {
    * @private
    */
   _listenToBackgroundProxyConnection(connection) {
-    console.log('_listenToBackgroundProxyConnection');
     connection.postMessage(this.name);
     connection.onMessage.addListener(message => this.handleMessage(message));
     connection.onDisconnect.addListener(() => this.disjoin());
@@ -118,14 +113,10 @@ class Group {
       this._makeBackgroundProxyConnection().then(connection =>
         this._establishBackgroundProxyConnection(connection)
       ).then(connection => {
-        console.log('joined');
         this.internalProxy = connection;
         this.isJoined = true;
-        console.log('resJoined');
         resJoined();
-        console.log('joined event');
         this.onJoin.forEach(fn => fn());
-        console.log('joined return');
         return connection;
       }).then(connection =>
         this._listenToBackgroundProxyConnection(connection)
