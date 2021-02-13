@@ -11,11 +11,13 @@ class GroupButton {
     this.group = group;
     /** @type {?HTMLLIElement} */
     this.elButton = null;
+    /** @type {?Node} */
+    this.preSpace = null;
   }
 
   /**
    * @callback appendCallback
-   * @param {...HTMLElement} elements Elements to be appended
+   * @param {...Node} elements Elements to be appended
    * @return {void}
    */
 
@@ -30,6 +32,7 @@ class GroupButton {
     // Make HTML structure
     this.elButton = document.createElement('li');
     this.elButton.append(document.createTextNode(this.group.name));
+    this.preSpace = document.createTextNode(' ');
 
     // Add events
     this.elButton.addEventListener('click', () => {
@@ -43,7 +46,12 @@ class GroupButton {
     this.group.onDisjoin.push(() => this.elButton.classList.remove('joined'));
 
     // Append to DOM
-    append(this.elButton);
+    append(this.preSpace, this.elButton);
+  }
+
+  remove() {
+    this.preSpace.remove();
+    this.elButton.remove();
   }
 
 }

@@ -62,7 +62,6 @@ class Group {
 
   _makeBackgroundProxyConnection() {
     return new Promise((res, rej) => {
-      console.log('_makeBackgroundProxyConnection');
       try {
         res(browser.runtime.connect());
       } catch (e) {

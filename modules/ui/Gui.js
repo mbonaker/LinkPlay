@@ -20,7 +20,7 @@ class Gui {
 
   /**
    * @callback appendCallback
-   * @param {...HTMLElement} elements Elements to be appended
+   * @param {...Node} elements Elements to be appended
    * @return {void}
    */
 
@@ -45,7 +45,7 @@ class Gui {
     this.controller.groupManager.onAdd.push(/** @type Group */ group => {
       const button = new GroupButton(this.controller, group);
       this.groupButtons.push(button);
-      button.make(el => this.elButtonList.append(el));
+      button.make((... el) => this.elButtonList.append(... el));
     });
 
     // Remove the old button if a group is removed
@@ -53,7 +53,7 @@ class Gui {
       for (const groupButton of this.groupButtons) {
         if (groupButton.group === group) {
           this.groupButtons = this.groupButtons.filter(gb => gb.group !== group);
-          groupButton.elButton.remove();
+          groupButton.remove();
         }
       }
     });
@@ -79,8 +79,8 @@ class Gui {
     this.elControlContainer.classList.add('linkplay-controls');
     this.elContainer.append(this.elControlContainer);
 
-    this.makeLinkPlayButton(el => this.elControlContainer.append(el));
-    this.makeGroupButtons(el => this.elControlContainer.append(el));
+    this.makeLinkPlayButton((... el) => this.elControlContainer.append(... el));
+    this.makeGroupButtons((... el) => this.elControlContainer.append(... el));
 
     // Make it, so the CSS can hide the LinkPlay button, based on mouse movement.
     let timeout = null;
